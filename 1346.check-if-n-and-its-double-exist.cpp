@@ -13,21 +13,21 @@ class Solution
 public:
     bool checkIfExist(vector<int> &arr)
     {
-        unordered_set<int> set;
+        bool nums[2001] = {false};
         for (auto i = 0; i < arr.size(); ++i)
         {
             auto n = 2 * arr[i];
-            if (set.find(n) != set.end())
+            if (n <= 1000 && n >= -1000 && nums[n + 1000])
                 return true;
 
             if (arr[i] % 2 == 0)
             {
                 auto m = arr[i] / 2;
-                if (set.find(m) != set.end())
+                if (m <= 1000 && m >= -1000 && nums[m + 1000])
                     return true;
             }
 
-            set.insert(arr[i]);
+            nums[arr[i] + 1000] = true;
         }
 
         return false;
