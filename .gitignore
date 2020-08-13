@@ -1,4 +1,11 @@
-.vscode/
+# VS Code configurations
+.vscode/*
+!.vscode/launch.json
+!.vscode/tasks.json
+
+# Build outputs
 *.dSYM
 *.out
+
+# macOS
 .DS_Store
