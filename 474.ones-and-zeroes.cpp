@@ -1,5 +1,6 @@
 #include <vector>
 #include <string>
+#include <algorithm>
 using namespace std;
 /*
  * @lc app=leetcode id=474 lang=cpp
@@ -11,34 +12,33 @@ using namespace std;
 class Solution
 {
 public:
-    int max_num_of_strs = 0;
     int findMaxForm(vector<string> &strs, int m, int n)
     {
-        vector<pair<int, int>> zeros_and_ones;
+        // dp[i][j][k] means the maximum number of strings we can get from first i elements
+        // with limited j number of 0s and k number of 1s.
+        // dp[i][j][k] = max(dp[i-1][j][k], dp[i-1][j-num_of_zeros(strs[i])][k-num_of_ones[strs[i]]]])
+        // we can decrease the space complexity from i*j*k to 2*j*k.
+        // int dp[m + 1][n + 1];
+        vector<vector<int>> prev(m + 1, vector<int>(n + 1, 0));
+        vector<vector<int>> dp(m + 1, vector<int>(n + 1, 0));
+
+        for (auto j = 0; j < m + 1; j++)
+            for (auto k = 0; k < n + 1; k++)
+                prev[j][k] = 0;
+
         for (auto s : strs)
         {
             auto zeros = count_ch(s, '0');
             auto ones = count_ch(s, '1');
-            zeros_and_ones.push_back(make_pair(zeros, ones));
+            for (auto j = 0; j < m + 1; j++)
+                for (auto k = 0; k < n + 1; k++)
+                    if (j >= zeros && k >= ones)
+                        dp[j][k] = max(prev[j][k], prev[j - zeros][k - ones] + 1);
+
+            prev = dp;
         }
 
-        dfs(zeros_and_ones, 0, 0, 0, 0, m, n);
-
-        return max_num_of_strs;
-    }
-
-    void dfs(vector<pair<int, int>> &vec, int curr, int prev_count, int prev_zeros, int prev_ones, int m, int n)
-    {
-        if (prev_zeros <= m && prev_ones <= n && prev_count > max_num_of_strs)
-            max_num_of_strs = prev_count;
-
-        if (prev_zeros > m || prev_ones > n)
-            return;
-        if (curr == vec.size())
-            return;
-
-        dfs(vec, curr + 1, prev_count + 1, prev_zeros + vec[curr].first, prev_ones + vec[curr].second, m, n);
-        dfs(vec, curr + 1, prev_count, prev_zeros, prev_ones, m, n);
+        return dp[m][n];
     }
 
     int count_ch(string s, char target)
@@ -53,3 +53,11 @@ public:
     }
 };
 // @lc code=end
+int main()
+{
+    // ["10","0001","111001","1","0"]
+    // 5
+    // 3
+    auto strs = vector<string>{"10", "0001", "111001", "1", "0"};
+    Solution{}.findMaxForm(strs, 5, 3);
+}
