@@ -17,25 +17,22 @@ public:
         // dp[i][j][k] means the maximum number of strings we can get from first i elements
         // with limited j number of 0s and k number of 1s.
         // dp[i][j][k] = max(dp[i-1][j][k], dp[i-1][j-num_of_zeros(strs[i])][k-num_of_ones[strs[i]]]])
-        // we can decrease the space complexity from i*j*k to 2*j*k.
+        // we can decrease the space complexity from i*j*k to j*k.
         // int dp[m + 1][n + 1];
-        vector<vector<int>> prev(m + 1, vector<int>(n + 1, 0));
         vector<vector<int>> dp(m + 1, vector<int>(n + 1, 0));
 
         for (auto j = 0; j < m + 1; j++)
             for (auto k = 0; k < n + 1; k++)
-                prev[j][k] = 0;
+                dp[j][k] = 0;
 
         for (auto s : strs)
         {
             auto zeros = count_ch(s, '0');
             auto ones = count_ch(s, '1');
-            for (auto j = 0; j < m + 1; j++)
-                for (auto k = 0; k < n + 1; k++)
+            for (auto j = m; j >= 0; j--)
+                for (auto k = n; k >= 0; k--)
                     if (j >= zeros && k >= ones)
-                        dp[j][k] = max(prev[j][k], prev[j - zeros][k - ones] + 1);
-
-            prev = dp;
+                        dp[j][k] = max(dp[j][k], dp[j - zeros][k - ones] + 1);
         }
 
         return dp[m][n];
