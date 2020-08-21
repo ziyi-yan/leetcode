@@ -53,34 +53,43 @@ class Solution
 public:
     TreeNode *sortedListToBST(ListNode *head)
     {
-        if (!head)
+        auto size = findSize(head);
+        curr = head;
+
+        return convertListToBST(0, size - 1);
+    }
+
+private:
+    TreeNode *convertListToBST(int l, int r)
+    {
+        if (l > r)
             return nullptr;
-        if (!head->next)
-            return new TreeNode(head->val);
 
-        auto middle = cutAtMiddle(head);
+        auto mid = (l + r) / 2;
 
-        auto root = new TreeNode(middle->val);
-        root->left = sortedListToBST(head);
-        root->right = sortedListToBST(middle->next);
+        auto left = convertListToBST(l, mid - 1);
 
+        auto root = new TreeNode(curr->val);
+        curr = curr->next;
+
+        auto right = convertListToBST(mid + 1, r);
+
+        root->left = left;
+        root->right = right;
         return root;
     }
 
-    ListNode *cutAtMiddle(ListNode *head)
+    int findSize(ListNode *head)
     {
-        ListNode *slow, *fast;
-        slow = fast = head;
-        ListNode *prev = nullptr;
-        while (fast && fast->next)
+        int count = 0;
+        while (head)
         {
-            fast = fast->next->next;
-            prev = slow;
-            slow = slow->next;
+            count += 1;
+            head = head->next;
         }
-        if (prev)
-            prev->next = nullptr;
-        return slow;
+        return count;
     }
+
+    ListNode *curr;
 };
 // @lc code=end
