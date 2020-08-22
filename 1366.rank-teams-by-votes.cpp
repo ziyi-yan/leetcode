@@ -2,6 +2,7 @@
 #include <string>
 #include <unordered_map>
 #include <algorithm>
+#include <cmath>
 using namespace std;
 /*
  * @lc app=leetcode id=1366 lang=cpp
@@ -16,52 +17,51 @@ public:
     string rankTeams(vector<string> &votes)
     {
         if (votes.empty())
-        {
             return "";
-        }
+        if (votes.size() == 1)
+            return votes[0];
 
         auto numTeams = votes[0].size();
-        vector<int> teams;
-        unordered_map<char, vector<int>> scores;
+        vector<double> powers(numTeams, 0.0);
+        double scores[26] = {0.0};
         for (auto vote : votes)
         {
             for (auto rank = 0; rank < numTeams; rank++)
             {
                 auto team = vote[rank];
-                if (scores.find(team) == scores.end())
-                {
-                    scores[team].resize(numTeams);
-                    teams.push_back(team);
-                }
-                scores[team][rank] += 1;
+                scores[team - 'A'] += power(powers, votes.size(), (numTeams - 1 - rank));
             }
         }
 
-        sort(teams.begin(), teams.end(), [&](char lhs, char rhs) {
-            auto l = scores[lhs];
-            auto r = scores[rhs];
+        sort(votes[0].begin(), votes[0].end(), [&](char lhs, char rhs) {
+            auto l = scores[lhs - 'A'];
+            auto r = scores[rhs - 'A'];
             return compareScores(lhs, l, rhs, r);
         });
 
-        return string(teams.begin(), teams.end());
+        return string(votes[0].begin(), votes[0].end());
     }
 
 private:
-    bool compareScores(char lteam, vector<int> l, char rteam, vector<int> r)
+    bool compareScores(char lteam, double l, char rteam, double r)
     {
-        for (auto i = 0; i < l.size(); i++)
-        {
-            if (l[i] > r[i])
-                return true;
-            if (l[i] < r[i])
-                return false;
-        }
+        if (l > r)
+            return true;
+        if (l < r)
+            return false;
         return lteam < rteam;
+    }
+
+    double power(vector<double> &powers, double base, double exp)
+    {
+        if (powers[exp] == 0.0)
+            powers[exp] = pow(base, exp);
+        return powers[exp];
     }
 };
 // @lc code=end
 int main()
 {
-    vector<string> teams = {"BCA", "CAB", "CBA", "ABC", "ACB", "BAC"};
+    vector<string> teams = {"ZMNAGUEDSJYLBOPHRQICWFXTVK"};
     auto result = Solution{}.rankTeams(teams);
 }
