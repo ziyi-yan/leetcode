@@ -29,7 +29,7 @@ public:
             for (auto rank = 0; rank < numTeams; rank++)
             {
                 auto team = vote[rank];
-                scores[team - 'A'] += power(powers, votes.size(), (numTeams - 1 - rank));
+                scores[team - 'A'] += power(powers, votes.size() + 1, (numTeams - 1 - rank));
             }
         }
 
