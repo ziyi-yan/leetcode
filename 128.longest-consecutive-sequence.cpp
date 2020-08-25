@@ -10,90 +10,81 @@ using namespace std;
 // @lc code=start
 // UnionFind implements union-find data structure.
 // It uses weighted quick-union with path compression.
-class UnionFind
-{
-public:
-    UnionFind(size_t size) : parents_(size), sizes_(size, 1)
-    {
-        for (auto i = 0; i < parents_.size(); i++)
-            parents_[i] = i;
-    }
-
-    int root(int i)
-    {
-        while (parents_[i] != i)
-        {
-            parents_[i] = parents_[parents_[i]];
-            i = parents_[i];
-        }
-        return i;
-    }
-
-    bool find(int p, int q)
-    {
-        return root(p) == root(q);
-    }
-
-    void unite(int p, int q)
-    {
-        int i = root(p);
-        int j = root(q);
-
-        if (sizes_[i] < sizes_[j])
-        {
-            parents_[i] = j;
-            sizes_[j] += sizes_[i];
-        }
-        else
-        {
-            parents_[j] = i;
-            sizes_[i] += sizes_[j];
-        }
-    }
-
-    int size(int i)
-    {
-        return sizes_[root(i)];
-    }
-
-private:
-    // the parent of i.
-    vector<int> parents_;
-    // the size of each root.
-    vector<int> sizes_;
-};
-
 class Solution
 {
 public:
+    // O(n) OPTIMIZATION:
+    // use customized array and store the left or right end
+    // information and only update the size of the leftmost and rightmost
+    // elements.
+    // Because we only need to care about the ones less than the leftmost one
+    // or those larger than the rightmost for finding the .
     int longestConsecutive(vector<int> &nums)
     {
-        unordered_map<int, int> indices;
-        UnionFind uf(nums.size());
-        int largest = 0;
+        if (nums.empty())
+            return 0;
+
+        unordered_map<int, SizePosition> positions;
+
+        int largest = 1;
 
         for (auto i = 0; i < nums.size(); i++)
         {
             auto n = nums[i];
-            if (indices.find(n) != indices.end())
+            if (positions.find(n) != positions.end())
                 continue;
 
-            indices[n] = i;
-            if (indices.find(n - 1) != indices.end())
-            {
-                uf.unite(indices[n - 1], i);
-            }
-            if (indices.find(n + 1) != indices.end())
-            {
-                uf.unite(indices[n + 1], i);
-            }
+            positions[n] = SizePosition{.size = 1, .position = Position::Inside};
 
-            auto size = uf.size(i);
-            if (size > largest)
-                largest = size;
+            if (positions.find(n - 1) != positions.end())
+            {
+                auto size = unite(positions, n - 1, n);
+
+                if (size > largest)
+                    largest = size;
+            }
+            if (positions.find(n + 1) != positions.end())
+            {
+                auto size = unite(positions, n, n + 1);
+
+                if (size > largest)
+                    largest = size;
+            }
         }
 
         return largest;
     }
+
+private:
+    enum class Position
+    {
+        Left,
+        Right,
+        Inside
+    };
+    struct SizePosition
+    {
+        int size;
+        Position position; // left (-1) or right (1) or inside (0).
+    };
+
+    int unite(unordered_map<int, SizePosition> &positions, int right_end, int left_end)
+    {
+        if (positions[right_end].position == Position::Left || positions[left_end].position == Position::Right)
+            return 0;
+        auto left_size = positions[left_end].size;
+        auto right_size = positions[right_end].size;
+        auto size = left_size + right_size;
+        positions[right_end - (right_size - 1)].size = size;
+        positions[right_end - (right_size - 1)].position = Position::Left;
+        positions[left_end + (left_size - 1)].size = size;
+        positions[left_end + (left_size - 1)].position = Position::Right;
+        return size;
+    }
 };
 // @lc code=end
+int main()
+{
+    vector<int> input = {100, 4, 200, 1, 3, 2};
+    auto result = Solution().longestConsecutive(input);
+}
