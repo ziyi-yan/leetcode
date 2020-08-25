@@ -10,42 +10,16 @@ using namespace std;
 class Solution
 {
 public:
-    string removeDuplicates(string S)
+    string removeDuplicates(string s)
     {
-        if (S.empty())
-            return "";
-
-        string temp;
-        string *todo = &S, *done = &temp;
-        do
+        auto i = 0;
+        for (auto j = 0; j < s.size(); i++, j++)
         {
-            done->resize(0);
-            remove(*todo, *done);
-
-            auto temp = todo;
-            todo = done;
-            done = temp;
-        } while (todo->size() != done->size());
-
-        return *todo;
-    }
-
-private:
-    void remove(string &S, string &removed)
-    {
-        char prev = S[0];
-        auto i = 1;
-        while (i <= S.size())
-        {
-            if (S[i] != prev || i == S.size())
-                removed.push_back(prev);
-            else
-                i++;
-
-            if (i < S.size())
-                prev = S[i];
-            i++;
+            s[i] = s[j];
+            if (i > 0 && s[i - 1] == s[i])
+                i -= 2;
         }
+        return s.substr(0, i);
     }
 };
 // @lc code=end
