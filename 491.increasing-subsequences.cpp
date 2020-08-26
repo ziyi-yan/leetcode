@@ -23,12 +23,8 @@ private:
     {
         if (i == nums.size())
         {
-            auto str = stringify(curr);
-            if (curr.size() > 1 && dedup.find(str) == dedup.end())
-            {
+            if (curr.size() > 1)
                 result.push_back(curr);
-                dedup.insert(str);
-            }
             return;
         }
 
@@ -40,21 +36,16 @@ private:
             curr.pop_back();
         }
 
+        // For de-duplicate reason, if curr value is equal to previous one,
+        // don't search for not-using-nums[i] case because it will be covered when
+        // previous ones are in not-using cases.
+        if (!curr.empty() && nums[i] == curr[curr.size() - 1])
+            return;
+
         // don't use nums[i]
         dfs(nums, i + 1);
     }
-    string stringify(vector<int> xs)
-    {
-        string str;
-        for (auto x : xs)
-        {
-            str.append(to_string(x));
-            str.push_back(';');
-        }
-        return str;
-    }
     vector<int> curr;
     vector<vector<int>> result;
-    unordered_set<string> dedup;
 };
 // @lc code=end
