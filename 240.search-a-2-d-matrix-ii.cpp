@@ -18,57 +18,36 @@ public:
         if (matrix[0].empty())
             return false;
 
-        Point left_top = {.x = 0, .y = 0};
-        Point right_bottom = {.x = matrix.size() - 1, .y = matrix[0].size() - 1};
-        while (left_top.x + 1 < right_bottom.x || left_top.y + 1 < right_bottom.y)
-        {
-            auto middle = calculateMiddle(left_top, right_bottom);
-            if (matrix[middle.x][middle.y] == target)
-                return true;
-            else if (matrix[middle.x][middle.y] > target)
-            {
-                right_bottom = middle;
-            }
-            else
-                left_top = middle;
-        }
-        if (matrix[left_top.x][left_top.y] == target)
-            return true;
-        if (matrix[right_bottom.x][right_bottom.y] == target)
-            return true;
+        this->target = target;
 
-        if (matrix[left_top.x][right_bottom.y] == target)
-            return true;
-        if (matrix[right_bottom.x][left_top.y] == target)
-            return true;
-
-        return false;
+        return search(matrix, 0, 0, matrix[0].size() - 1, matrix.size() - 1);
     }
 
 private:
-    struct Point
-    {
-        size_t x, y;
+    int target;
 
-        bool operator<(const Point &o)
-        {
-            return tie(x, y) < tie(o.x, o.y);
-        }
-    };
-    Point calculateMiddle(Point l, Point r)
+    bool search(vector<vector<int>> &matrix, int left, int top, int right, int bottom)
     {
-        auto p = Point{.x = l.x + (r.x - l.x) / 2, .y = l.y + (r.y - l.y) / 2};
-        return p;
+        if (left > right || top > bottom)
+            return false;
+        if (target < matrix[top][left] || target > matrix[bottom][right])
+            return false;
+        int mid = left + (right - left) / 2;
+        int row = top;
+        while (row <= bottom && matrix[row][mid] <= target)
+        {
+            if (matrix[row][mid] == target)
+                return true;
+            row++;
+        }
+        // matrix[row-1][mid] < target < matrix[row][mid]
+        return search(matrix, left, row, mid - 1, bottom) || search(matrix, mid + 1, top, right, row - 1);
     }
 };
 // @lc code=end
 int main()
 {
-    vector<vector<int>> input = {{1, 2, 3, 4, 5},
-                                 {6, 7, 8, 9, 10},
-                                 {11, 12, 13, 14, 15},
-                                 {16, 17, 18, 19, 20},
-                                 {21, 22, 23, 24, 25}};
-    int target = 15;
-    auto result = Solution().searchMatrix(input, target);
+    vector<vector<int>> input = {{1, 1}};
+    int target = 1;
+    auto result = Solution{}.searchMatrix(input, target);
 }
