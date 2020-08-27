@@ -1,4 +1,6 @@
 #include <vector>
+#include <string>
+#include <queue>
 #include <unordered_map>
 #include <algorithm>
 using namespace std;
@@ -14,36 +16,34 @@ class Solution
 public:
     vector<string> findItinerary(vector<vector<string>> &tickets)
     {
-        unordered_map<string, vector<string>> m;
         for (auto t : tickets)
         {
             auto from = t[0], to = t[1];
-            m[from].push_back(to);
+            m[from].push(to);
         }
-        size = tickets.size() + 1;
-        result.push_back("JFK");
-        dfs(m, 1);
+
+        dfs("JFK");
+
+        reverse(result.begin(), result.end());
         return result;
     }
 
 private:
-    bool dfs(unordered_map<string, vector<string>> &m, int curr)
+    void dfs(const string &curr)
     {
-        if (curr == size)
-            return true;
-
-        auto from = result[result.size() - 1];
-        sort(m[from].begin(), m[from].end(), [](const string &lhs, const string &rhs) { return lhs.compare(rhs); });
-        for (auto to : m[from])
+        while (m[curr].size())
         {
-            result.push_back(to);
-            if (dfs(m, curr + 1))
-                return true;
-            result.pop_back();
+            auto next = m[curr].top();
+            m[curr].pop(); // delete the path when forwarding to next node
+            dfs(move(next));
         }
-        return false;
+        // Add node to result when all its path is visited.
+        // So, the node with odd degree will be added first.
+        // And it will put all nodes in a reverse order in path.
+        // Reference: https://leetcode-cn.com/problems/reconstruct-itinerary/solution/javadfsjie-fa-by-pwrliang/
+        result.push_back(curr);
     }
     vector<string> result;
-    int size;
+    unordered_map<string, priority_queue<string, vector<string>, greater<string>>> m;
 };
 // @lc code=end
