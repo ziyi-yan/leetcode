@@ -18,36 +18,31 @@ public:
         if (matrix[0].empty())
             return false;
 
-        this->target = target;
-
-        return search(matrix, 0, 0, matrix[0].size() - 1, matrix.size() - 1);
-    }
-
-private:
-    int target;
-
-    bool search(vector<vector<int>> &matrix, int left, int top, int right, int bottom)
-    {
-        if (left > right || top > bottom)
-            return false;
-        if (target < matrix[top][left] || target > matrix[bottom][right])
-            return false;
-        int mid = left + (right - left) / 2;
-        int row = top;
-        while (row <= bottom && matrix[row][mid] <= target)
+        // Search from left-bottom corner to right-top.
+        // Each step we can trim O(m) or O(n) elements.
+        int row = matrix.size() - 1;
+        int col = 0;
+        while (row >= 0 && col < matrix[0].size())
         {
-            if (matrix[row][mid] == target)
+            if (matrix[row][col] == target)
                 return true;
-            row++;
+
+            if (matrix[row][col] < target)
+                col++;
+            else
+                row--;
         }
-        // matrix[row-1][mid] < target < matrix[row][mid]
-        return search(matrix, left, row, mid - 1, bottom) || search(matrix, mid + 1, top, right, row - 1);
+        return false;
     }
 };
 // @lc code=end
 int main()
 {
-    vector<vector<int>> input = {{1, 1}};
-    int target = 1;
+    vector<vector<int>> input = {{1, 4, 7, 11, 15},
+                                 {2, 5, 8, 12, 19},
+                                 {3, 6, 9, 16, 22},
+                                 {10, 13, 14, 17, 24},
+                                 {18, 21, 23, 26, 30}};
+    int target = 5;
     auto result = Solution{}.searchMatrix(input, target);
 }
