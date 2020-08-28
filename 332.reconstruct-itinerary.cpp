@@ -2,6 +2,7 @@
 #include <string>
 #include <queue>
 #include <unordered_map>
+#include <map>
 #include <algorithm>
 using namespace std;
 /*
@@ -11,39 +12,57 @@ using namespace std;
  */
 
 // @lc code=start
+// Standard DFS solution: https://leetcode-cn.com/problems/reconstruct-itinerary/solution/332-zhong-xin-an-pai-xing-cheng-hui-su-fa-shen-sou/
+// NOTE: use (ordered) map from key to its count for lexical order iterating and mutating at same time.
 class Solution
 {
 public:
     vector<string> findItinerary(vector<vector<string>> &tickets)
     {
+        unordered_map<string, map<string, int>> m;
         for (auto t : tickets)
         {
             auto from = t[0], to = t[1];
-            m[from].push(to);
+            m[from][to] += 1;
         }
-
-        dfs("JFK");
-
-        reverse(result.begin(), result.end());
+        size = tickets.size() + 1;
+        result.push_back("JFK");
+        dfs(m);
         return result;
     }
 
 private:
-    void dfs(const string &curr)
+    bool dfs(unordered_map<string, map<string, int>> &m)
     {
-        while (m[curr].size())
+        if (result.size() == size)
+            return true;
+
+        auto from = result[result.size() - 1];
+        for (auto &to : m[from])
         {
-            auto next = m[curr].top();
-            m[curr].pop(); // delete the path when forwarding to next node
-            dfs(move(next));
+            if (to.second)
+            {
+                to.second--;
+                result.push_back(to.first);
+                if (dfs(m))
+                    return true;
+                result.pop_back();
+                to.second++;
+            }
         }
-        // Add node to result when all its path is visited.
-        // So, the node with odd degree will be added first.
-        // And it will put all nodes in a reverse order in path.
-        // Reference: https://leetcode-cn.com/problems/reconstruct-itinerary/solution/javadfsjie-fa-by-pwrliang/
-        result.push_back(curr);
+        return false;
     }
     vector<string> result;
-    unordered_map<string, priority_queue<string, vector<string>, greater<string>>> m;
+    int size;
 };
 // @lc code=end
+int main()
+{
+    vector<vector<string>> input = {
+        {"JFK", "SFO"},
+        {"JFK", "ATL"},
+        {"SFO", "ATL"},
+        {"ATL", "JFK"},
+        {"ATL", "SFO"}};
+    auto result = Solution().findItinerary(input);
+}
