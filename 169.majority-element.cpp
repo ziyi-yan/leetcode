@@ -13,14 +13,22 @@ class Solution
 public:
     int majorityElement(vector<int> &nums)
     {
-        unordered_map<int, int> count;
-        for (auto n : nums)
+        // Reference: Approach 6: Boyer-Moore Voting Algorithm in https://leetcode.com/problems/majority-element/solution/
+        int major;
+        int count = 0;
+        for (auto i = 0; i < nums.size(); i++)
         {
-            count[n]++;
-            if (count[n] > nums.size() / 2)
-                return n;
+            if (count == 0)
+            {
+                major = nums[i];
+                count++;
+            }
+            else if (nums[i] == major)
+                count++;
+            else
+                count--;
         }
-        return 0; // code may never run here.
+        return major;
     }
 };
 // @lc code=end
