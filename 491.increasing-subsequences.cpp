@@ -39,6 +39,18 @@ private:
         // For de-duplicate reason, if curr value is equal to previous one,
         // don't search for not-using-nums[i] case because it will be covered when
         // previous ones are in not-using cases.
+        //
+        // Example:
+        // Input: [4, 6, 7, 7, 7, 8, 9]
+        //
+        // dfs(4,6,7,7,7...)
+        //
+        // dfs(4,6,X,7,7...)
+        // dfs(4,6,7,7,X...) PRUNED CASE
+        //
+        // dfs(4,6,7,X,X...) PRUNED CASE
+        // dfs(4,6,X,7,X...) PRUNED CASE
+        // dfs(4,6,X,X,7...)
         if (!curr.empty() && nums[i] == curr[curr.size() - 1])
             return;
 
