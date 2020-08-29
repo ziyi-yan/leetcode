@@ -6,7 +6,7 @@ using namespace std;
  *
  * [930] Binary Subarrays With Sum
  */
-
+// Reference: https://leetcode.com/problems/binary-subarrays-with-sum/discuss/186683/C%2B%2BJavaPython-Sliding-Window-O(1)-Space
 // @lc code=start
 class Solution
 {
