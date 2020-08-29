@@ -18,47 +18,26 @@ public:
 
     void addNum(int num)
     {
-        if (!max_heap.size())
-            max_heap.push(num);
-        else if (num < max_heap.top())
-            max_heap.push(num);
-        else
-            min_heap.push(num);
+        lo.push(num);
+        hi.push(lo.top());
+        lo.pop();
 
-        while (diff(min_heap.size(), max_heap.size()) > 1)
-            if (min_heap.size() > max_heap.size())
-            {
-                max_heap.push(min_heap.top());
-                min_heap.pop();
-            }
-            else
-            {
-                min_heap.push(max_heap.top());
-                max_heap.pop();
-            }
+        if (lo.size() < hi.size())
+        {
+            lo.push(hi.top());
+            hi.pop();
+        }
     }
 
     double findMedian()
     {
-        if (min_heap.size() == max_heap.size())
-            return min_heap.top() + (max_heap.top() - min_heap.top()) / 2.0;
-        else if (min_heap.size() < max_heap.size())
-            return max_heap.top();
-        else
-            return min_heap.top();
+        // lo.size() is not smaller than hi.size()
+        return lo.size() > hi.size() ? lo.top() : lo.top() + (hi.top() - lo.top()) / 2.0;
     }
 
 private:
-    int64_t diff(int64_t x, int64_t y)
-    {
-        auto diff = x - y;
-        if (diff >= 0)
-            return diff;
-        else
-            return -diff;
-    }
-    priority_queue<int, vector<int>, greater<int>> min_heap;
-    priority_queue<int, vector<int>, less<int>> max_heap;
+    priority_queue<int> lo;
+    priority_queue<int, vector<int>, greater<int>> hi;
 };
 
 /**
