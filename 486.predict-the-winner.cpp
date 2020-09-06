@@ -8,29 +8,30 @@ using namespace std;
 
 // @lc code=start
 class Solution {
-    // search returns a integer as a score which is the score of player 1 minus
-    // the score of player 2. In player 1's turn, it will try to maximize the
-    // score. In player 2's turn, it will try to minimize the score.
-    int search(vector<int> nums, int s, int e, vector<vector<int>> &memo) {
-        if (s == e) {
-            return nums[s];
-        }
-        if (memo[s][e] == -1) {
-            auto a = nums[s] - search(nums, s + 1, e, memo);
-            auto b = nums[e] - search(nums, s, e - 1, memo);
-            memo[s][e] = max(a, b);
-        }
-        return memo[s][e];
-    }
-
+    // dp[s][e] has the maximum score for the player who picks first in range
+    // [s, e] in nums.
+    //
+    // dp[s][e] = max(nums[s] - dp[s+1][e], nums[e] - dp[s][e-1])
   public:
     bool PredictTheWinner(vector<int> &nums) {
-        vector<vector<int>> memo(nums.size(), vector<int>(nums.size(), -1));
-        return search(nums, 0, nums.size() - 1, memo) >= 0;
+        auto n = nums.size();
+        vector<vector<int>> dp(n, vector<int>(n));
+        for (int s = n - 1; s >= 0; s--) {
+            for (int e = s; e < n; e++) {
+                if (s == e) {
+                    dp[s][e] = nums[s];
+                } else {
+                    dp[s][e] =
+                        max(nums[s] - dp[s + 1][e], nums[e] - dp[s][e - 1]);
+                }
+            }
+        }
+        return dp[0][n - 1] >= 0;
     }
 };
 // @lc code=end
 int main() {
-    vector<int> input = {2, 4, 55, 6, 8};
+    // vector<int> input = {2, 4, 55, 6, 8};
+    vector<int> input = {1, 5, 2};
     auto result = Solution().PredictTheWinner(input);
 }
