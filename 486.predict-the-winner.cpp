@@ -11,24 +11,18 @@ class Solution {
     // search returns a integer as a score which is the score of player 1 minus
     // the score of player 2. In player 1's turn, it will try to maximize the
     // score. In player 2's turn, it will try to minimize the score.
-    int search(vector<int> nums, int l, int r, bool is_p1) {
-        if (l == r) {
-            return is_p1 ? nums[l] : -nums[l];
+    int search(vector<int> nums, int s, int e, int turn) {
+        if (s == e) {
+            return turn * nums[s];
         }
-        if (is_p1) {
-            auto a = nums[l] + search(nums, l + 1, r, !is_p1);
-            auto b = nums[r] + search(nums, l, r - 1, !is_p1);
-            return max(a, b);
-        } else {
-            auto a = -nums[l] + search(nums, l + 1, r, !is_p1);
-            auto b = -nums[r] + search(nums, l, r - 1, !is_p1);
-            return min(a, b);
-        }
+        auto a = turn * nums[s] + search(nums, s + 1, e, -turn);
+        auto b = turn * nums[e] + search(nums, s, e - 1, -turn);
+        return turn * max(turn * a, turn * b);
     }
 
   public:
     bool PredictTheWinner(vector<int> &nums) {
-        return search(nums, 0, nums.size() - 1, true) >= 0;
+        return search(nums, 0, nums.size() - 1, 1) >= 0;
     }
 };
 // @lc code=end
