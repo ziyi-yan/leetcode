@@ -8,34 +8,27 @@ using namespace std;
 
 // @lc code=start
 class Solution {
-    bool search(vector<int> nums, int l, int r, int p1, int p2, bool is_p1) {
-        if (l > r) {
-            return p1 >= p2;
+    // search returns a integer as a score which is the score of player 1 minus
+    // the score of player 2. In player 1's turn, it will try to maximize the
+    // score. In player 2's turn, it will try to minimize the score.
+    int search(vector<int> nums, int l, int r, bool is_p1) {
+        if (l == r) {
+            return is_p1 ? nums[l] : -nums[l];
         }
         if (is_p1) {
-            if (search(nums, l + 1, r, p1 + nums[l], p2, !is_p1)) {
-                return true;
-            }
-            if (search(nums, l, r - 1, p1 + nums[r], p2, !is_p1)) {
-                return true;
-            }
+            auto a = nums[l] + search(nums, l + 1, r, !is_p1);
+            auto b = nums[r] + search(nums, l, r - 1, !is_p1);
+            return max(a, b);
         } else {
-            if (nums[l] >= nums[r]) {
-                if (search(nums, l + 1, r, p1, p2 + nums[l], !is_p1)) {
-                    return true;
-                }
-            } else {
-                if (search(nums, l, r - 1, p1, p2 + nums[r], !is_p1)) {
-                    return true;
-                }
-            }
+            auto a = -nums[l] + search(nums, l + 1, r, !is_p1);
+            auto b = -nums[r] + search(nums, l, r - 1, !is_p1);
+            return min(a, b);
         }
-        return false;
     }
 
   public:
     bool PredictTheWinner(vector<int> &nums) {
-        return search(nums, 0, nums.size() - 1, 0, 0, true);
+        return search(nums, 0, nums.size() - 1, true) >= 0;
     }
 };
 // @lc code=end
