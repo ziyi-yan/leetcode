@@ -16,6 +16,20 @@
 - [x] 169 v
 - [x] 230 v
 - [x] 753 v
-- [ ] 712
-- [ ] 557
-- [ ] 669
+- [x] 712
+- [x] 557
+- [x] 669
+- [x] 5 TODO 学习 Manacher 算法
+- [x] 647 TODO 学习 Manacher 算法
+- [ ] 1542 TODO hard
+- [ ] 927 TODO hard
+- [x] 486
+- [ ] 668 TODO hard
+- [ ] 1388 TODO hard
+- [ ] 1289 TODO hard
+- [ ] 面试 04.09 TODO hard
+- [ ] 51 TODO hard
+- [ ] 316 TODO hard
+- [ ] 60 TODO hard
+- [ ] 272 VIP
+- [ ] 450
