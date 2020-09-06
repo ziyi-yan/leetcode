@@ -1,3 +1,8 @@
 # 优化点
 
 1. 动态规划的空间复杂度是否可以优化，要看他的状态转移方程。
+
+# Tips
+
+1. memoization DFS use python with @lru_cache decorator
+2. max_element() to get the max element from C++ container
