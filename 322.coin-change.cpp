@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <functional>
+#include <limits>
 #include <vector>
 using namespace std;
 /*
@@ -10,24 +11,27 @@ using namespace std;
 
 // @lc code=start
 class Solution {
-    int cnt = -1;
-    bool dfs(vector<int> &coins, int s, int amount, int cnt) {
-        if (s == coins.size()) {
-            if (amount == 0) {
-                this->cnt = cnt;
-                return true;
-            } else {
-                return false;
-            }
+    int countChange(vector<int> &coins, int idx, int amount) {
+        if (amount == 0) {
+            return 0;
+        }
+        if (idx == coins.size()) {
+            return -1;
         }
 
-        int n = amount / coins[s];
-        for (int i = n; i >= 0; i--) {
-            if (dfs(coins, s + 1, amount - i * coins[s], cnt + i)) {
-                return true;
+        int n = amount / coins[idx];
+        int min_num_coins = numeric_limits<int>::max();
+        for (auto i = 0; i <= n; i++) {
+            auto count = countChange(coins, idx + 1, amount - i * coins[idx]);
+            if (count != -1) {
+                min_num_coins = min(min_num_coins, count + i);
             }
         }
-        return false;
+        if (min_num_coins == numeric_limits<int>::max()) {
+            return -1;
+        } else {
+            return min_num_coins;
+        }
     }
 
   public:
@@ -39,16 +43,14 @@ class Solution {
         if (coins.empty())
             return -1;
 
-        sort(coins.begin(), coins.end(), greater<int>());
-
-        dfs(coins, 0, amount, 0);
-
-        return cnt;
+        return countChange(coins, 0, amount);
     }
 };
 // @lc code=end
 
 int main() {
-    auto input = vector<int>{2};
-    auto result = Solution().coinChange(input, 3);
+    // auto input = vector<int>{1, 2, 5};
+    // auto result = Solution().coinChange(input, 11);
+    auto input = vector<int>{186, 419, 83, 408};
+    auto result = Solution().coinChange(input, 6249);
 }
