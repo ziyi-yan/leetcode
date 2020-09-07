@@ -23,7 +23,7 @@
 - [x] 647 TODO 学习 Manacher 算法
 - [ ] 1542 TODO hard
 - [ ] 927 TODO hard
-- [x] 486
+- [x] 486 TODO minimax algorithm in Game theory
 - [ ] 668 TODO hard
 - [ ] 1388 TODO hard
 - [ ] 1289 TODO hard
@@ -32,4 +32,14 @@
 - [ ] 316 TODO hard
 - [ ] 60 TODO hard
 - [ ] 272 VIP
-- [ ] 450
+- [x] 450
+- [ ] 156 VIP
+- [x] 347
+- [ ] 5492
+- [x] 110
+
+## Dynamic Programming
+
+- [x] 62
+- [x] 63
+- [x] 322
