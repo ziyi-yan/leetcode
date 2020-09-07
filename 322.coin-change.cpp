@@ -11,39 +11,22 @@ using namespace std;
 
 // @lc code=start
 class Solution {
-    int countChange(vector<int> &coins, int idx, int amount) {
-        if (amount == 0) {
-            return 0;
-        }
-        if (idx == coins.size()) {
-            return -1;
-        }
-
-        int n = amount / coins[idx];
-        int min_num_coins = numeric_limits<int>::max();
-        for (auto i = 0; i <= n; i++) {
-            auto count = countChange(coins, idx + 1, amount - i * coins[idx]);
-            if (count != -1) {
-                min_num_coins = min(min_num_coins, count + i);
+  public:
+    // dp[i] = min_{j=0...n-1}{dp[i - coins[j]]} + 1
+    // dp[0] = 0
+    int coinChange(vector<int> &coins, int amount) {
+        int n = coins.size();
+        int max_val = amount + 1;
+        vector<int> dp(amount + 1, max_val);
+        dp[0] = 0;
+        for (int i = 1; i <= amount; i++) {
+            for (int j = 0; j < n; j++) {
+                if (i - coins[j] >= 0) {
+                    dp[i] = min(dp[i], dp[i - coins[j]] + 1);
+                }
             }
         }
-        if (min_num_coins == numeric_limits<int>::max()) {
-            return -1;
-        } else {
-            return min_num_coins;
-        }
-    }
-
-  public:
-    int coinChange(vector<int> &coins, int amount) {
-        if (amount == 0)
-            return 0;
-        if (amount < 0)
-            return -1;
-        if (coins.empty())
-            return -1;
-
-        return countChange(coins, 0, amount);
+        return dp[amount] == max_val ? -1 : dp[amount];
     }
 };
 // @lc code=end
