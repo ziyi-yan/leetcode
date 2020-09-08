@@ -8,32 +8,12 @@ using namespace std;
 
 // @lc code=start
 class Solution {
-    //  1: true
-    // -1: false
-    //  0: uninitialized
-    int dfs(vector<int> &nums, vector<vector<int>> &memo, int target, int idx,
-            int curr) {
-        if (curr > target) {
-            return -1;
-        }
-        if (curr == target) {
-            return 1;
-        }
-        if (idx == nums.size()) {
-            return -1;
-        }
-
-        if (!memo[idx][curr]) {
-            memo[idx][curr] =
-                (dfs(nums, memo, target, idx + 1, curr + nums[idx]) == 1 ||
-                 dfs(nums, memo, target, idx + 1, curr) == 1)
-                    ? 1
-                    : -1;
-        }
-        return memo[idx][curr];
-    }
-
   public:
+    // dp[n+1][target+1];
+    // dp[i][j] = dp[i-1][j] || dp[i-1][j-nums[i]];
+    // dp[0][0] = true
+    // dp[i][0] = true
+    // dp[0][j] = false
     bool canPartition(vector<int> &nums) {
         auto sum = 0;
         for (auto x : nums) {
@@ -44,8 +24,20 @@ class Solution {
         }
 
         auto target = sum / 2;
-        vector<vector<int>> memo(nums.size(), vector<int>(target, 0));
-        return dfs(nums, memo, target, 0, 0) == 1;
+
+        int n = nums.size();
+        vector<bool> dp(target + 1, false);
+        dp[0] = true;
+        for (int x : nums) {
+            for (int j = target; j - x >= 0; j--) {
+                dp[j] = dp[j] || dp[j - x];
+            }
+        }
+        return dp[target];
     }
 };
 // @lc code=end
+int main() {
+    vector<int> input = {1, 2, 5};
+    auto result = Solution().canPartition(input);
+}
