@@ -13,11 +13,8 @@ class Solution {
             return curr == target;
         }
 
-        if (dfs(nums, target, idx + 1, curr + nums[idx])) {
-            return true;
-        }
-
-        return dfs(nums, target, idx + 1, curr);
+        return dfs(nums, target, idx + 1, curr + nums[idx]) ||
+               dfs(nums, target, idx + 1, curr);
     }
 
   public:
