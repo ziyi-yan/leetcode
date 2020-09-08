@@ -1,4 +1,4 @@
-#include <bits/stdc++.h>
+#include <vector>
 using namespace std;
 /*
  * @lc app=leetcode id=416 lang=cpp
@@ -8,23 +8,30 @@ using namespace std;
 
 // @lc code=start
 class Solution {
+    bool dfs(vector<int> &nums, int target, int idx, int curr) {
+        if (idx == nums.size()) {
+            return curr == target;
+        }
+
+        if (dfs(nums, target, idx + 1, curr + nums[idx])) {
+            return true;
+        }
+
+        return dfs(nums, target, idx + 1, curr);
+    }
+
   public:
     bool canPartition(vector<int> &nums) {
-        sort(nums.begin(), nums.end());
-
         auto sum = 0;
         for (auto x : nums) {
             sum += x;
         }
-
-        auto curr = 0;
-        for (auto i = 0; i < nums.size(); i++) {
-            curr += nums[i];
-            if (2 * curr >= sum) {
-                return 2 * curr == sum;
-            }
+        if (sum % 2 != 0) {
+            return false;
         }
-        return false;
+
+        auto target = sum / 2;
+        return dfs(nums, target, 0, 0);
     }
 };
 // @lc code=end
