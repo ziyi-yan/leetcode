@@ -8,13 +8,29 @@ using namespace std;
 
 // @lc code=start
 class Solution {
-    bool dfs(vector<int> &nums, int target, int idx, int curr) {
+    //  1: true
+    // -1: false
+    //  0: uninitialized
+    int dfs(vector<int> &nums, vector<vector<int>> &memo, int target, int idx,
+            int curr) {
+        if (curr > target) {
+            return -1;
+        }
+        if (curr == target) {
+            return 1;
+        }
         if (idx == nums.size()) {
-            return curr == target;
+            return -1;
         }
 
-        return dfs(nums, target, idx + 1, curr + nums[idx]) ||
-               dfs(nums, target, idx + 1, curr);
+        if (!memo[idx][curr]) {
+            memo[idx][curr] =
+                (dfs(nums, memo, target, idx + 1, curr + nums[idx]) == 1 ||
+                 dfs(nums, memo, target, idx + 1, curr) == 1)
+                    ? 1
+                    : -1;
+        }
+        return memo[idx][curr];
     }
 
   public:
@@ -28,7 +44,8 @@ class Solution {
         }
 
         auto target = sum / 2;
-        return dfs(nums, target, 0, 0);
+        vector<vector<int>> memo(nums.size(), vector<int>(target, 0));
+        return dfs(nums, memo, target, 0, 0) == 1;
     }
 };
 // @lc code=end
