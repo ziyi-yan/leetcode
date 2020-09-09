@@ -1,3 +1,4 @@
+#include <stack>
 #include <vector>
 using namespace std;
 /*
@@ -34,12 +35,20 @@ class Solution {
         vector<int> result;
         if (!root) return result;
 
-        auto l = inorderTraversal(root->left);
-        result.insert(result.end(), l.begin(), l.end());
-        result.push_back(root->val);
-        auto r = inorderTraversal(root->right);
-        result.insert(result.end(), r.begin(), r.end());
+        stack<TreeNode *> s;
+        while (root || s.size()) {
+            while (root) {
+                s.push(root);
+                root = root->left;
+            }
 
+            auto top = s.top();
+            s.pop();
+            if (top) {
+                result.push_back(top->val);
+                root = top->right;
+            }
+        }
         return result;
     }
 };
