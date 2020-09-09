@@ -1,3 +1,4 @@
+#include <stack>
 #include <vector>
 using namespace std;
 /*
@@ -5,14 +6,14 @@ using namespace std;
  *
  * [145] Binary Tree Postorder Traversal
  */
-struct TreeNode
-{
+struct TreeNode {
     int val;
     TreeNode *left;
     TreeNode *right;
     TreeNode() : val(0), left(nullptr), right(nullptr) {}
     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
-    TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+    TreeNode(int x, TreeNode *left, TreeNode *right)
+        : val(x), left(left), right(right) {}
 };
 // @lc code=start
 /**
@@ -23,25 +24,34 @@ struct TreeNode
  *     TreeNode *right;
  *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
  *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
- *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left),
+ * right(right) {}
  * };
  */
-class Solution
-{
-public:
-    vector<int> postorderTraversal(TreeNode *root)
-    {
+class Solution {
+   public:
+    vector<int> postorderTraversal(TreeNode *root) {
         vector<int> nodes;
-        postorder(nodes, root);
+        if (!root) return nodes;
+
+        stack<TreeNode *> s;
+        while (root || s.size()) {
+            while (root) {
+                if (root->right) s.push(root->right);
+                s.push(root);
+                root = root->left;
+            }
+            auto top = s.top();
+            s.pop();
+            if (s.size() && top->right == s.top()) {
+                root = s.top();
+                s.pop();
+                s.push(top);
+            } else {
+                nodes.push_back(top->val);
+            }
+        }
         return nodes;
-    }
-    void postorder(vector<int> &nodes, TreeNode *root)
-    {
-        if (!root)
-            return;
-        postorder(nodes, root->left);
-        postorder(nodes, root->right);
-        nodes.push_back(root->val);
     }
 };
 // @lc code=end
