@@ -27,7 +27,7 @@ struct TreeNode {
  * };
  */
 class Solution {
-  public:
+   public:
     TreeNode *deleteNode(TreeNode *root, int key) {
         if (!root) {
             return root;
@@ -48,15 +48,17 @@ class Solution {
         if (!root->right) {
             return root->left;
         }
-        // Move root->right->left to the right-most place of root->left subtree.
-        // And, use root->right as the new root.
+        // Delete the largest node in root->left subtree and put its value to
+        // the root node.
         auto curr = root->left;
+        auto parent = &root->left;
         while (curr->right) {
+            parent = &curr->right;
             curr = curr->right;
         }
-        curr->right = root->right->left;
-        root->right->left = root->left;
-        return root->right;
+        root->val = curr->val;
+        *parent = curr->left;
+        return root;
     }
 };
 // @lc code=end
