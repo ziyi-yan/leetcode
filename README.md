@@ -32,7 +32,7 @@
 - [ ] 316 TODO hard
 - [ ] 60 TODO hard
 - [ ] 272 VIP
-- [x] 450 **TODO** delete the largest value of left subtree and replace it to the node to be deleted
+- [x] 450 v
 - [ ] 156 VIP
 - [x] 347
 - [ ] 5492
@@ -47,3 +47,9 @@
 - [x] 322
 - [x] 416
 - [ ] 698
+
+## Sliding window
+
+- [ ] 239
+- [x] 3
+- [x] 424
