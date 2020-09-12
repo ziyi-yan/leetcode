@@ -8,7 +8,6 @@ using namespace std;
  */
 
 // @lc code=start
-const int HEAP_SIZE = 3;
 class Solution {
    public:
     vector<int> maxSlidingWindow(vector<int>& nums, int k) {
@@ -22,42 +21,28 @@ class Solution {
             return result;
         }
 
-        priority_queue<int, vector<int>, greater<int>> min_heap;
-        priority_queue<int> max_heap;
-        vector<int> buffer;
-        buffer.reserve(3);
+        deque<int> queue;
+        // NOTE: we don't need to retain the smaller value before the maximun
+        // one, so we pop all the smaller values when a larger one appears but
+        // we append smaller ones when there is a larger one already in the
+        // queue.
         for (int i = 0; i < k; i++) {
-            min_heap.push(nums[i]);
-            if (min_heap.size() > 3) {
-                min_heap.pop();
+            while (queue.size() && nums[queue.back()] < nums[i]) {
+                queue.pop_back();
             }
+            queue.push_back(i);
         }
-        while (min_heap.size()) {
-            max_heap.push(min_heap.top());
-            min_heap.pop();
-        }
-        result.push_back(max_heap.top());
+        result.push_back(nums[queue.front()]);
         for (int i = k; i < nums.size(); i++) {
-            // remove nums[i-k]
-            bool deleted = false;
-            while (max_heap.size()) {
-                if (!deleted && max_heap.top() == nums[i - k]) {
-                    deleted = true;
-                } else {
-                    buffer.push_back(max_heap.top());
-                }
-                max_heap.pop();
+            if (queue.front() <= i - k) {
+                queue.pop_front();
             }
-            for (auto x : buffer) {
-                max_heap.push(x);
+            while (queue.size() && nums[queue.back()] < nums[i]) {
+                queue.pop_back();
             }
-            buffer.resize(0);
-            // add nums[i]
-            max_heap.push(nums[i]);
-
-            result.push_back(max_heap.top());
+            queue.push_back(i);
+            result.push_back(nums[queue.front()]);
         }
-
         return result;
     }
 };
