@@ -1,3 +1,5 @@
+#include <algorithm>
+#include <functional>
 #include <vector>
 using namespace std;
 /*
@@ -39,8 +41,18 @@ class Solution {
             return false;
         }
         int target = sum / k;
+
+        // Optimization for searching: eliminate all the elements which equals
+        // to target.
+        sort(nums.begin(), nums.end(), greater<int>());
+        if (nums[0] > target) return false;
+        int i = 0;
+        while (i < nums.size() && nums[i] == target) {
+            i++;
+            k--;
+        }
         vector<int> group(k, 0);
-        return dfs(group, 0, nums, target);
+        return dfs(group, i, nums, target);
     }
 };
 // @lc code=end
