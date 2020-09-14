@@ -10,25 +10,26 @@ using namespace std;
 
 // @lc code=start
 class Solution {
-    bool dfs(vector<int> &group, int i, vector<int> &nums, int target) {
-        if (i == nums.size()) {
-            // for (auto x : group) {
-            //     if (x != target) return false;
-            // }
-            // NOTE: we don't need to check the sum because the condition 1)
-            // `target = sum / k`, and 2) `group[i] <= target` can ensure that
-            // if each element is placed on a group, the sum of each group must
-            // be target.
-            return true;
-        }
-        for (int j = 0; j < group.size(); j++) {
-            if (group[j] + nums[i] <= target) {
-                group[j] += nums[i];
-                if (dfs(group, i + 1, nums, target)) return true;
-                group[j] -= nums[i];
+    enum class State {
+        UNINIT,
+        TRUE,
+        FALSE,
+    };
+    int target;
+    bool dfs(vector<State> &memo, vector<int> &nums, int used, int remain) {
+        if (memo[used] == State::UNINIT) {
+            memo[used] = State::FALSE;
+            int threshold = (remain - 1) % target + 1;
+            for (int i = 0; i < nums.size(); i++) {
+                if ((((used >> i) & 1) == 0) && nums[i] <= threshold) {
+                    if (dfs(memo, nums, used | (1 << i), remain - nums[i])) {
+                        memo[used] = State::TRUE;
+                        break;
+                    }
+                }
             }
         }
-        return false;
+        return memo[used] == State::TRUE;
     }
 
    public:
@@ -41,18 +42,13 @@ class Solution {
             return false;
         }
         int target = sum / k;
-
-        // Optimization for searching: eliminate all the elements which equals
-        // to target.
-        sort(nums.begin(), nums.end(), greater<int>());
-        if (nums[0] > target) return false;
-        int i = 0;
-        while (i < nums.size() && nums[i] == target) {
-            i++;
-            k--;
-        }
-        vector<int> group(k, 0);
-        return dfs(group, i, nums, target);
+        this->target = target;
+        // Use a integer as a bitset for storing the state whether each
+        // element are used.
+        // 1 for true, -1 for faulse, 0 for uninitialized.
+        vector<State> memo(1 << nums.size(), State::UNINIT);
+        memo[(1 << nums.size()) - 1] = State::TRUE;
+        return dfs(memo, nums, 0, sum);
     }
 };
 // @lc code=end
