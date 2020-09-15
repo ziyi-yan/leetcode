@@ -19,8 +19,8 @@
 - [x] 712 x
 - [x] 557 v
 - [x] 669 v
-- [x] 5 **TODO** 学习 Manacher 算法
-- [x] 647 **TODO** 学习 Manacher 算法
+- [x] 5 v
+- [x] 647 v
 - [ ] 1542 TODO hard
 - [ ] 927 TODO hard
 - [x] 486 TODO minimax algorithm in Game theory
@@ -46,10 +46,10 @@
 - [x] 63
 - [x] 322
 - [x] 416
-- [ ] 698
+- [x] 698
 
 ## Sliding window
 
-- [ ] 239
+- [x] 239
 - [x] 3
 - [x] 424
